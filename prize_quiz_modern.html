@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrizeMe • Квіз Переможця 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Playfair+Display:wght@700&amp;display=swap');
+        
+        :root {
+            --primary: #1E3A8A;
+        }
+        
+        body {
+            font-family: 'Inter', system_ui, sans-serif;
+        }
+        
+        .heading-font {
+            font-family: 'Playfair Display', Georgia, serif;
+        }
+
+        .modern-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .modern-card:active {
+            transform: scale(0.97);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+
+        .quiz-option {
+            transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+        
+        .quiz-option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+        
+        .quiz-option.selected {
+            border-color: #F59E0B;
+            background-color: #FFFBEB;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+        }
+
+        .screen {
+            animation: fadeInUp 0.4s ease-out forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .prize-gold {
+            background: linear-gradient(135deg, #F59E0B, #D97706, #B45309);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .section-header {
+            background: linear-gradient(to right, #1E3A8A, #3B82F6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tap-hint {
+            animation: tapPulse 2s infinite;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: confetti-fall 3s linear forwards;
+            z-index: 100;
+        }
+
+        .progress-bar {
+            transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .modern-btn {
+            transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .modern-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .modern-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 40%;
+            height: 200%;
+            background: linear-gradient(
+                to right,
+                transparent 20%,
+                rgba(255,255,255,0.6) 50%,
+                transparent 80%
+            );
+            transform: skewX(-25deg);
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) skewX(-25deg); }
+            20% { transform: translateX(300%) skewX(-25deg); }
+            100% { transform: translateX(300%) skewX(-25deg); }
+        }
+
+        .nav-dot {
+            transition: all 0.3s ease;
+        }
+
+        .nav-dot.active {
+            background-color: #F59E0B;
+            box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.3);
+        }
+
+        .product-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+        }
+
+        .luxury-shadow {
+            box-shadow: 0 25px 50px -12px rgb(30 58 138 / 0.25), 
+                       0 10px 10px -6px rgb(30 58 138 / 0.1);
+        }
+    </style>
+</head>
+<body class="bg-zinc-950 text-zinc-200">
+    <!-- Phone Frame Container -->
+    <div class="max-w-[420px] mx-auto min-h-screen bg-zinc-900 shadow-2xl overflow-hidden relative border border-zinc-800">
+        
+        <!-- Top Status Bar -->
+        <div class="bg-zinc-950 h-11 flex items-center justify-between px-6 text-xs font-medium text-zinc-400">
+            <div>09:41</div>
+            <div class="flex items-center gap-1">
+                <i class="fa-solid fa-signal"></i>
+                <i class="fa-solid fa-wifi"></i>
+                <span>92%</span>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="bg-zinc-900 border-b border-zinc-800 px-5 py-4 flex items-center justify-between sticky top-0 z-50">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-gradient-to-br from-amber-400 to-yellow-600 rounded-2xl flex items-center justify-center shadow-lg">
+                    <i class="fa-solid fa-trophy text-white text-xl"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-xl tracking-tighter">PrizeMe</div>
+                    <div class="text-[10px] text-emerald-400 -mt-1">ПРИЗИ • 2026</div>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-2 text-xs">
+                <div class="px-3 py-1 bg-emerald-500/10 text-emerald-400 rounded-full flex items-center gap-1.5 text-[10px]">
+                    <div class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></div>
+                    <span>ONLINE</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress -->
+        <div class="px-5 pt-4 pb-2 bg-zinc-900">
+            <div class="flex items-center justify-between text-xs mb-1.5 px-1">
+                <div class="font-medium text-amber-400">КРОК <span id="current-step">1</span> з 7</div>
+                <div class="text-zinc-500 font-mono" id="progress-text">14%</div>
+            </div>
+            <div class="h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+                <div id="progress-bar" 
+                     class="h-1.5 bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-500 rounded-full transition-all duration-500 ease-out"
+                     style="width: 14%"></div>
+            </div>
+        </div>
+
+        <!-- SCREENS -->
+        <div id="screens-container" class="relative h-[calc(100vh-132px)] overflow-hidden bg-zinc-950">
+
+            <!-- SCREEN 1: WELCOME -->
+            <div id="screen-1" class="screen absolute inset-0 p-6 flex flex-col bg-zinc-950">
+                <div class="flex-1 flex flex-col items-center justify-center text-center">
+                    <!-- Trophy Animation -->
+                    <div class="relative mb-8">
+                        <div class="w-28 h-28 bg-gradient-to-br from-amber-300 to-yellow-600 rounded-[3rem] flex items-center justify-center shadow-[0_0_80px_-10px] shadow-amber-500 animate-[pulse_3s_ease-in-out_infinite]">
+                            <i class="fa-solid fa-trophy text-white text-6xl drop-shadow-xl"></i>
+                        </div>
+                        <div class="absolute -top-2 -right-2 w-8 h-8 bg-emerald-400 rounded-full flex items-center justify-center animate-bounce">
+                            <i class="fa-solid fa-check text-emerald-950 text-xs font-black"></i>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="inline-flex items-center gap-2 px-4 py-1 bg-amber-500/10 rounded-full mb-3">
+                            <span class="text-amber-400 text-xs font-semibold tracking-[1px]">ПЕРЕМОЖЕЦЬ #4825121</span>
+                        </div>
+                        <h1 class="text-5xl font-black tracking-tighter leading-none mb-2">ВІТАЄМО,<br>БОБР!</h1>
+                        <p class="text-2xl text-amber-400 font-semibold">Ви — ПЕРЕМОЖЕЦЬ!</p>
+                    </div>
+
+                    <div class="max-w-[260px] mx-auto">
+                        <p class="text-zinc-400 text-sm leading-snug">Ви успішно зареєструвалися в акції PrizeMe та здобули статус <span class="font-semibold text-white">ПЕРЕМОЖЕЦЬ</span></p>
+                    </div>
+
+                    <div class="mt-8 mb-2">
+                        <div class="text-[13px] text-zinc-500">СУМА ПРИЗУ</div>
+                        <div class="text-6xl font-black tracking-[-2px] prize-gold">390 000</div>
+                        <div class="text-lg -mt-1 text-amber-300 font-medium">ГРИВЕНЬ</div>
+                    </div>
+                </div>
+
+                <div class="px-2 pb-6">
+                    <button onclick="nextScreen(2)"
+                            class="modern-btn w-full py-4 bg-white text-zinc-950 font-bold text-base rounded-3xl flex items-center justify-center gap-3 shadow-xl active:scale-[0.985]">
+                        <span>ПОЧАТИ АКТИВАЦІЮ</span>
+                        <i class="fa-solid fa-arrow-right text-lg"></i>
+                    </button>
+                    <div class="text-center mt-4 text-[10px] text-zinc-500">Безкоштовно • 2 хвилини</div>
+                </div>
+            </div>
+
+            <!-- SCREEN 2: QUIZ Q1 -->
+            <div id="screen-2" class="screen hidden absolute inset-0 p-6 flex flex-col bg-zinc-950">
+                <div class="flex-1">
+                    <div class="mb-8">
+                        <div class="text-amber-400 text-xs font-semibold tracking-widest mb-1">ПЕРСОНАЛІЗАЦІЯ ПРИЗУ</div>
+                        <h2 class="text-3xl font-bold tracking-tight">Оберіть категорію,<br>яка вам найбільше подобається</h2>
+                        <p class="text-sm text-zinc-400 mt-2">Це допоможе нам підібрати ідеальний приз для вас</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div onclick="selectOption(this, 'q1', 'home'); nextAfterSelection(3)" 
+                             class="quiz-option flex items-center gap-4 bg-zinc-900 border border-zinc-700 hover:border-amber-400 p-4 rounded-3xl cursor-pointer">
+                            <div class="w-12 h-12 bg-orange-500/10 text-orange-400 rounded-2xl flex items-center justify-center flex-shrink-0">
+                                <i class="fa-solid fa-home text-2xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="font-semibold">Дім та затишок</div>
+                                <div class="text-xs text-zinc-400">Подушки, текстиль, декор</div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-zinc-600"></i>
+                        </div>
+
+                        <div onclick="selectOption(this, 'q1', 'beauty'); nextAfterSelection(3)" 
+                             class="quiz-option flex items-center gap-4 bg-zinc-900 border border-zinc-700 hover:border-amber-400 p-4 rounded-3xl cursor-pointer">
+                            <div class="w-12 h-12 bg-pink-500/10 text-pink-400 rounded-2xl flex items-center justify-center flex-shrink-0">
+                                <i class="fa-solid fa-spa text-2xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="font-semibold">Краса та здоров'я</div>
+                                <div class="text-xs text-zinc-400">Косметика, догляд, вітаміни</div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-zinc-600"></i>
+                        </div>
+
+                        <div onclick="selectOption(this, 'q1', 'home-goods'); nextAfterSelection(3)" 
+                             class="quiz-option flex items-center gap-4 bg-zinc-900 border border-zinc-700 hover:border-amber-400 p-4 rounded-3xl cursor-pointer">
+                            <div class="w-12 h-12 bg-emerald-500/10 text-emerald-400 rounded-2xl flex items-center justify-center flex-shrink-0">
+                                <i class="fa-solid fa-boxes text-2xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="font-semibold">Для дому та сім'ї</div>
+                                <div class="text-xs text-zinc-400">Побутова хімія, кухня, сад</div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-zinc-600"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center text-[10px] text-zinc-500 pt-4">Тапніть на варіант, щоб продовжити</div>
+            </div>
+
+            <!-- SCREEN 3: QUIZ Q2 -->
+            <div id="screen-3" class="screen hidden absolute inset-0 p-6 flex flex-col bg-zinc-950">
+                <div class="flex-1">
+                    <div class="mb-8">
+                        <div class="flex items-center gap-2 text-xs text-amber-400 mb-1">
+                            <div>ПИТАННЯ 2 З 3</div>
+                        </div>
+                        <h2 class="text-3xl font-bold tracking-tight">Як часто ви<br>робите покупки онлайн?</h2>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-3">
+                        <div onclick="selectOption(this, 'q2', 'often'); nextAfterSelection(4)" 
+                             class="quiz-option bg-zinc-900 border border-zinc-700 p-5 rounded-3xl cursor-pointer flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <i class="fa-solid fa-sync text-emerald-400 text-xl w-6"></i>
+                                <div>
+                                    <div class="font-semibold">Дуже часто</div>
+                                    <div class="text-xs text-emerald-400">Кожного тижня</div>
+                                </div>
+                            </div>
+                            <div class="px-3 py-1 bg-emerald-500/10 text-emerald-400 text-xs rounded-full">80% переможців</div>
+                        </div>
+
+                        <div onclick="selectOption(this, 'q2', 'sometimes'); nextAfterSelection(4)" 
+                             class="quiz-option bg-zinc-900 border border-zinc-700 p-5 rounded-3xl cursor-pointer flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <i class="fa-solid fa-calendar text-amber-400 text-xl w-6"></i>
+                                <div>
+                                    <div class="font-semibold">Іноді</div>
+                                    <div class="text-xs text-amber-400">1-2 рази на місяць</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div onclick="selectOption(this, 'q2', 'rarely'); nextAfterSelection(4)" 
+                             class="quiz-option bg-zinc-900 border border-zinc-700 p-5 rounded-3xl cursor-pointer flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <i class="fa-solid fa-clock text-zinc-400 text-xl w-6"></i>
+                                <div>
+                                    <div class="font-semibold">Рідко</div>
+                                    <div class="text-xs text-zinc-400">Кілька разів на рік</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCREEN 4: QUIZ Q3 + Verification teaser -->
+            <div id="screen-4" class="screen hidden absolute inset-0 p-6 flex flex-col bg-zinc-950">
+                <div class="flex-1">
+                    <div class="mb-6">
+                        <div class="text-xs text-amber-400">ФІНАЛЬНЕ ПИТАННЯ</div>
+                        <h2 class="text-3xl font-bold tracking-tight">Що для вас найважливіше?</h2>
+                    </div>
+
+                    <div class="space-y-2.5 mb-8">
+                        <div onclick="selectOption(this, 'q3', 'quality'); nextAfterSelection(5)" class="quiz-option p-4 bg-zinc-900 border border-zinc-700 rounded-3xl cursor-pointer flex items-center gap-3">
+                            <i class="fa-solid fa-medal text-amber-400 w-5"></i>
+                            <span class="font-medium">Найвища якість</span>
+                        </div>
+                        <div onclick="selectOption(this, 'q3', 'price'); nextAfterSelection(5)" class="quiz-option p-4 bg-zinc-900 border border-zinc-700 rounded-3xl cursor-pointer flex items-center gap-3">
+                            <i class="fa-solid fa-tags text-emerald-400 w-5"></i>
+                            <span class="font-medium">Краща ціна</span>
+                        </div>
+                        <div onclick="selectOption(this, 'q3', 'delivery'); nextAfterSelection(5)" class="quiz-option p-4 bg-zinc-900 border border-zinc-700 rounded-3xl cursor-pointer flex items-center gap-3">
+                            <i class="fa-solid fa-truck text-sky-400 w-5"></i>
+                            <span class="font-medium">Швидка доставка</span>
+                        </div>
+                        <div onclick="selectOption(this, 'q3', 'service'); nextAfterSelection(5)" class="quiz-option p-4 bg-zinc-900 border border-zinc-700 rounded-3xl cursor-pointer flex items-center gap-3">
+                            <i class="fa-solid fa-headset text-purple-400 w-5"></i>
+                            <span class="font-medium">Сервіс та підтримка</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-[10px] text-center text-zinc-500">Ваші відповіді допоможуть нам персоналізувати ваш досвід</div>
+            </div>
+
+            <!-- SCREEN 5: IDENTITY VERIFICATION -->
+            <div id="screen-5" class="screen hidden absolute inset-0 p-6 flex flex-col bg-zinc-950">
+                <div class="flex-1 flex flex-col">
+                    <div class="text-center mb-6">
+                        <div class="mx-auto w-20 h-20 bg-zinc-800 rounded-full flex items-center justify-center mb-4 ring-4 ring-offset-4 ring-offset-zinc-950 ring-amber-500/30">
+                            <img src="https://i.pravatar.cc/80?img=68" alt="Бобр" class="w-20 h-20 rounded-full object-cover ring-2 ring-amber-400">
+                        </div>
+                        <h2 class="text-2xl font-bold">Підтвердіть особу</h2>
+                        <p class="text-sm text-zinc-400 mt-1">Це ви, <span class="font-semibold text-white">Бобр</span>?</p>
+                    </div>
+
+                    <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-5 mb-6">
+                        <div class="flex justify-between text-sm mb-4">
+                            <div class="text-zinc-400">ПІБ</div>
+                            <div class="font-medium">Кураа Бобр</div>
+                        </div>
+                        <div class="flex justify-between text-sm mb-4">
+                            <div class="text-zinc-400">ID переможця</div>
+                            <div class="font-mono text-emerald-400">MDA0ODI1MTIx</div>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <div class="text-zinc-400">Дата реєстрації</div>
+                            <div>15.01.2026</div>
+                        </div>
+                    </div>
+
+                    <div class="mt-auto grid grid-cols-2 gap-3">
+                        <button onclick="selectNoIdentity()"
+                                class="py-4 border border-zinc-700 hover:bg-zinc-800 text-sm font-medium rounded-3xl transition-colors">
+                            НІ, ЦЕ НЕ Я
+                        </button>
+                        <button onclick="confirmIdentity()"
+                                class="modern-btn py-4 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-bold text-sm rounded-3xl flex items-center justify-center gap-2 shadow-lg">
+                            <span>ТАК, ЦЕ Я</span>
+                            <i class="fa-solid fa-check"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCREEN 6: GIFT AGREEMENT FORM -->
+            <div id="screen-6" class="screen hidden absolute inset-0 p-6 flex flex-col bg-zinc-950 overflow-y-auto">
+                <div>
+                    <div class="mb-5">
+                        <div class="uppercase tracking-[1.5px] text-xs text-amber-400">КРОК 6 З 7 • ДОГОВІР ДАРУВАННЯ</div>
+                        <h2 class="text-3xl font-bold tracking-tighter">Активуйте свій приз</h2>
+                        <p class="text-sm text-zinc-400 mt-1">Заповніть дані для юридичного оформлення</p>
+                    </div>
+
+                    <!-- Form -->
+                    <div class="space-y-5">
+                        <!-- DOB -->
+                        <div>
+                            <label class="text-xs text-zinc-400 block mb-1.5">Дата народження</label>
+                            <input type="date" id="dob" value="1987-03-12" 
+                                   class="w-full bg-zinc-900 border border-zinc-700 focus:border-amber-400 text-white px-5 py-3.5 rounded-3xl text-sm outline-none">
+                            <div class="text-[10px] text-emerald-400 mt-1 flex items-center gap-1">
+                                <i class="fa-solid fa-check-circle"></i> 
+                                <span>Повнолітній — перевірено</span>
+                            </div>
+                        </div>
+
+                        <!-- Bank -->
+                        <div>
+                            <label class="text-xs text-zinc-400 block mb-1.5">Банк для отримання коштів</label>
+                            <div class="grid grid-cols-3 gap-2">
+                                <div onclick="selectBank(this, 'monobank')" class="bank-option cursor-pointer p-3 border border-amber-400 bg-amber-500/5 rounded-2xl flex flex-col items-center text-center">
+                                    <i class="fa-brands fa-monero text-2xl mb-1 text-amber-400"></i>
+                                    <div class="text-xs font-medium">Monobank</div>
+                                </div>
+                                <div onclick="selectBank(this, 'privat')" class="bank-option cursor-pointer p-3 border border-zinc-700 hover:border-zinc-400 rounded-2xl flex flex-col items-center text-center">
+                                    <i class="fa-solid fa-university text-xl mb-1 text-blue-400"></i>
+                                    <div class="text-xs font-medium">ПриватБанк</div>
+                                </div>
+                                <div onclick="selectBank(this, 'pumb')" class="bank-option cursor-pointer p-3 border border-zinc-700 hover:border-zinc-400 rounded-2xl flex flex-col items-center text-center">
+                                    <i class="fa-solid fa-building text-xl mb-1 text-purple-400"></i>
+                                    <div class="text-xs font-medium">ПУМБ</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Confirmation -->
+                        <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-4">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input type="checkbox" id="confirm-data" checked class="mt-1 accent-amber-400">
+                                <span class="text-sm leading-tight">Я підтверджую, що мої дані вказані правильно та згоден з умовами акції</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-auto pt-6">
+                    <div class="text-[10px] text-center text-zinc-500 mb-3">* Не є фінансовим документом. Має юридичну силу після активації</div>
+                    
+                    <button onclick="submitAgreement()"
+                            class="modern-btn w-full py-[17px] bg-white text-zinc-950 font-extrabold rounded-3xl flex items-center justify-center gap-2 text-sm tracking-wider shadow-xl">
+                        <span>НАДІСЛАТИ ДОГОВІР</span>
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- SCREEN 7: TIMELINE + BECOME CLIENT -->
+            <div id="screen-7" class="screen hidden absolute inset-0 flex flex-col bg-zinc-950">
+                <div class="p-6 flex-1 overflow-y-auto">
+                    <div class="mb-6">
+                        <div class="text-emerald-400 text-xs font-semibold">ФІНАЛЬНИЙ КРОК</div>
+                        <h2 class="text-3xl font-bold tracking-tighter">Станьте клієнтом<br>і отримайте приз</h2>
+                    </div>
+
+                    <!-- Timeline -->
+                    <div class="mb-7">
+                        <div class="text-xs text-zinc-400 mb-3 px-1">ПЛАН ВИПЛАТ ПРИЗУ</div>
+                        
+                        <div class="bg-zinc-900 rounded-3xl p-4 border border-zinc-700">
+                            <div class="flex justify-between text-xs mb-3 px-1 text-emerald-400">
+                                <div>СІЧЕНЬ 2026</div>
+                                <div class="font-mono">390 000 грн</div>
+                            </div>
+                            
+                            <div class="relative h-1.5 bg-zinc-800 rounded mb-5">
+                                <div class="absolute left-0 top-0 h-1.5 w-[85%] bg-gradient-to-r from-emerald-400 to-emerald-600 rounded"></div>
+                                <div class="absolute -top-1 right-[15%] w-3.5 h-3.5 bg-emerald-400 rounded-full ring-4 ring-offset-2 ring-offset-zinc-900 ring-emerald-400/30"></div>
+                            </div>
+                            
+                            <div class="grid grid-cols-4 gap-px text-[10px] text-center">
+                                <div class="text-emerald-400 font-medium">30 січ</div>
+                                <div class="text-zinc-400">27 лют</div>
+                                <div class="text-zinc-400">27 бер</div>
+                                <div class="text-zinc-400">24 кві</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Why order -->
+                    <div class="mb-6">
+                        <div class="text-xs text-zinc-400 mb-2.5 px-1">ЧОМУ ПОТРІБНЕ ЗАМОВЛЕННЯ?</div>
+                        <div class="text-sm leading-snug text-zinc-300">
+                            За законом ми можемо вручати призи методом дарування <span class="font-semibold">тільки своїм клієнтам</span>. 
+                            Одне мінімальне замовлення — і ваш приз активовано назавжди.
+                        </div>
+                    </div>
+
+                    <!-- Product Selection -->
+                    <div>
+                        <div class="flex items-end justify-between mb-3 px-1">
+                            <div>
+                                <div class="font-semibold">Оберіть товар</div>
+                                <div class="text-xs text-zinc-400">Мінімальне замовлення для активації</div>
+                            </div>
+                            <div class="text-emerald-400 text-xs">від 99 грн</div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <!-- Product 1 -->
+                            <div onclick="selectProduct(this, 'Крем для обличчя «Еко»', 249)" 
+                                 class="product-card bg-zinc-900 border border-zinc-700 rounded-3xl overflow-hidden cursor-pointer">
+                                <div class="h-28 bg-zinc-800 relative">
+                                    <img src="https://picsum.photos/id/1015/300/200" class="w-full h-full object-cover" alt="Крем">
+                                    <div class="absolute top-2 right-2 bg-black/70 text-white text-[10px] px-2 py-px rounded">ТОП</div>
+                                </div>
+                                <div class="p-3">
+                                    <div class="font-semibold text-sm">Крем для обличчя «Еко»</div>
+                                    <div class="flex items-baseline justify-between">
+                                        <div class="text-emerald-400 font-bold">249 грн</div>
+                                        <div class="text-[10px] text-zinc-400">в наявності</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Product 2 -->
+                            <div onclick="selectProduct(this, 'Ортопедична подушка', 399)" 
+                                 class="product-card bg-zinc-900 border border-zinc-700 rounded-3xl overflow-hidden cursor-pointer">
+                                <div class="h-28 bg-zinc-800 relative">
+                                    <img src="https://picsum.photos/id/106/300/200" class="w-full h-full object-cover" alt="Подушка">
+                                </div>
+                                <div class="p-3">
+                                    <div class="font-semibold text-sm">Ортопедична подушка</div>
+                                    <div class="flex items-baseline justify-between">
+                                        <div class="text-emerald-400 font-bold">399 грн</div>
+                                        <div class="text-[10px] text-zinc-400">новинка</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Product 3 -->
+                            <div onclick="selectProduct(this, 'Набір для манікюру', 179)" 
+                                 class="product-card bg-zinc-900 border border-zinc-700 rounded-3xl overflow-hidden cursor-pointer">
+                                <div class="h-28 bg-zinc-800 relative">
+                                    <img src="https://picsum.photos/id/201/300/200" class="w-full h-full object-cover" alt="Манікюр">
+                                </div>
+                                <div class="p-3">
+                                    <div class="font-semibold text-sm">Набір для манікюру</div>
+                                    <div class="flex items-baseline justify-between">
+                                        <div class="text-emerald-400 font-bold">179 грн</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Product 4 -->
+                            <div onclick="selectProduct(this, 'Еко-торбинка', 99)" 
+                                 class="product-card bg-zinc-900 border border-zinc-700 rounded-3xl overflow-hidden cursor-pointer">
+                                <div class="h-28 bg-zinc-800 relative">
+                                    <img src="https://picsum.photos/id/1077/300/200" class="w-full h-full object-cover" alt="Торбинка">
+                                    <div class="absolute top-2 right-2 bg-black/70 text-white text-[10px] px-2 py-px rounded">ХІТ</div>
+                                </div>
+                                <div class="p-3">
+                                    <div class="font-semibold text-sm">Еко-торбинка з бавовни</div>
+                                    <div class="flex items-baseline justify-between">
+                                        <div class="text-emerald-400 font-bold">99 грн</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCREEN 8: SUCCESS -->
+            <div id="screen-8" class="screen hidden absolute inset-0 flex flex-col items-center justify-center bg-zinc-950 text-center p-6 overflow-hidden">
+                <div class="relative z-10">
+                    <!-- Big success icon -->
+                    <div class="mx-auto mb-6 w-24 h-24 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center shadow-[0_0_60px_-5px] shadow-emerald-500">
+                        <i class="fa-solid fa-check-double text-white text-5xl"></i>
+                    </div>
+
+                    <h1 class="text-5xl font-black tracking-tighter mb-2">ПРИЗ<br>АКТИВОВАНО!</h1>
+                    
+                    <div class="inline-flex items-center gap-2 bg-emerald-500/10 text-emerald-400 px-4 py-1 rounded-full text-xs mb-8">
+                        <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                        <span>Ваш договір надіслано на перевірку</span>
+                    </div>
+
+                    <div class="max-w-[260px] mx-auto text-sm text-zinc-300 mb-8">
+                        Вітаємо! Ви успішно завершили онбординг.<br>
+                        <span class="font-semibold text-white">390 000 грн</span> буде перераховано на ваш рахунок вже цього місяця.
+                    </div>
+
+                    <!-- Mini testimonials -->
+                    <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-4 text-left mb-8 max-w-[300px]">
+                        <div class="text-xs text-zinc-400 mb-3">ОСТАННІ ПЕРЕМОЖЦІ</div>
+                        
+                        <div class="space-y-3 text-xs">
+                            <div class="flex gap-3">
+                                <img src="https://i.pravatar.cc/24?img=47" class="rounded-full w-6 h-6">
+                                <div class="flex-1">
+                                    <div class="font-medium">Ірина С. — 390 000 грн</div>
+                                    <div class="text-emerald-400 text-[10px]">«Все прозоро, гроші прийшли вчасно»</div>
+                                </div>
+                            </div>
+                            <div class="flex gap-3">
+                                <img src="https://i.pravatar.cc/24?img=28" class="rounded-full w-6 h-6">
+                                <div class="flex-1">
+                                    <div class="font-medium">Галина Ш. — 390 000 грн</div>
+                                    <div class="text-emerald-400 text-[10px]">«Дякую PrizeMe! Рекомендую»</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full max-w-[300px] z-10">
+                    <button onclick="goToCatalog()" 
+                            class="modern-btn w-full py-4 bg-gradient-to-r from-amber-400 to-yellow-500 text-zinc-950 font-extrabold rounded-3xl mb-3 flex items-center justify-center gap-2 shadow-xl text-sm">
+                        <span>ПЕРЕЙТИ В КАТАЛОГ</span>
+                        <i class="fa-solid fa-store"></i>
+                    </button>
+                    
+                    <button onclick="shareWin()" 
+                            class="w-full py-3 text-xs font-medium text-zinc-400 flex items-center justify-center gap-2 hover:text-white transition-colors">
+                        <i class="fa-solid fa-share-alt"></i>
+                        <span>Поділитися з друзями</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Bottom Navigation Hint -->
+        <div class="h-12 bg-zinc-900 border-t border-zinc-800 flex items-center justify-center text-[10px] text-zinc-500">
+            <div class="flex items-center gap-1.5">
+                <i class="fa-solid fa-hand-pointer text-amber-400"></i>
+                <span>Тапайте для вибору</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Tailwind script
+        function initializeTailwind() {
+            document.documentElement.style.setProperty('--accent', '#F59E0B');
+        }
+
+        let currentScreen = 1;
+        let selectedOptions = {};
+        let selectedBank = null;
+        let selectedProduct = null;
+
+        function updateProgress(step) {
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            const currentStepEl = document.getElementById('current-step');
+            
+            const percent = Math.round((step / 7) * 100);
+            progressBar.style.width = `${percent}%`;
+            progressText.textContent = `${percent}%`;
+            currentStepEl.textContent = step;
+        }
+
+        function showScreen(screenNum) {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.add('hidden');
+                screen.style.opacity = '0';
+            });
+            
+            // Show target screen
+            const targetScreen = document.getElementById(`screen-${screenNum}`);
+            if (targetScreen) {
+                targetScreen.classList.remove('hidden');
+                setTimeout(() => {
+                    targetScreen.style.transition = 'opacity 0.3s ease';
+                    targetScreen.style.opacity = '1';
+                }, 10);
+            }
+            
+            currentScreen = screenNum;
+            updateProgress(screenNum);
+            
+            // Special actions per screen
+            if (screenNum === 8) {
+                launchConfetti();
+            }
+        }
+
+        function nextScreen(screenNum) {
+            showScreen(screenNum);
+        }
+
+        function selectOption(element, question, value) {
+            // Deselect siblings
+            const siblings = element.parentElement.children;
+            for (let i = 0; i < siblings.length; i++) {
+                siblings[i].classList.remove('selected', 'border-amber-400');
+                siblings[i].classList.add('border-zinc-700');
+            }
+            
+            // Select current
+            element.classList.add('selected', 'border-amber-400');
+            element.classList.remove('border-zinc-700');
+            
+            // Store answer
+            selectedOptions[question] = value;
+            
+            // Haptic feedback simulation
+            if (navigator.vibrate) navigator.vibrate(15);
+        }
+
+        function nextAfterSelection(nextScreenNum) {
+            // Small delay for better UX
+            setTimeout(() => {
+                showScreen(nextScreenNum);
+            }, 280);
+        }
+
+        function confirmIdentity() {
+            const btns = event.currentTarget;
+            // Simulate loading
+            const screen = document.getElementById('screen-5');
+            screen.style.transition = 'opacity 0.2s';
+            screen.style.opacity = '0.6';
+            
+            setTimeout(() => {
+                showScreen(6);
+            }, 420);
+        }
+
+        function selectNoIdentity() {
+            if (confirm('Ви впевнені, що це не ви? Ми зв\'яжемося з вами для перевірки.')) {
+                alert('Дякуємо! Наш менеджер зв\'яжеться з вами протягом 15 хвилин.');
+                // In real app would redirect or show support
+            }
+        }
+
+        function selectBank(element, bank) {
+            // Deselect all
+            document.querySelectorAll('.bank-option').forEach(el => {
+                el.classList.remove('border-amber-400', 'bg-amber-500/5');
+                el.classList.add('border-zinc-700');
+            });
+            
+            element.classList.add('border-amber-400', 'bg-amber-500/5');
+            element.classList.remove('border-zinc-700');
+            
+            selectedBank = bank;
+        }
+
+        function submitAgreement() {
+            const dob = document.getElementById('dob').value;
+            const confirmCheckbox = document.getElementById('confirm-data');
+            
+            if (!dob) {
+                alert('Будь ласка, вкажіть дату народження');
+                return;
+            }
+            
+            if (!selectedBank) {
+                alert('Оберіть банк для отримання коштів');
+                return;
+            }
+            
+            if (!confirmCheckbox.checked) {
+                alert('Будь ласка, підтвердіть дані');
+                return;
+            }
+            
+            // Success animation
+            const btn = event.currentTarget;
+            const originalText = 'НАДІСЛАТИ ДОГОВІР';
+            
+            const screen6 = document.getElementById('screen-6');
+            screen6.style.transition = 'all 0.3s ease';
+            screen6.style.transform = 'translateY(-20px)';
+            screen6.style.opacity = '0.3';
+            
+            setTimeout(() => {
+                showScreen(7);
+            }, 650);
+        }
+
+        function selectProduct(element, productName, price) {
+            // Visual feedback
+            document.querySelectorAll('.product-card').forEach(el => {
+                el.style.borderColor = '';
+                el.style.boxShadow = '';
+            });
+            
+            element.style.borderColor = '#10b981';
+            element.style.boxShadow = '0 0 0 3px rgba(16, 185, 129, 0.2)';
+            
+            selectedProduct = { name: productName, price: price };
+            
+            // Simulate processing
+            setTimeout(() => {
+                const screen = document.getElementById('screen-7');
+                screen.style.transition = 'all 0.4s cubic-bezier(0.34,1.56,0.64,1)';
+                screen.style.transform = 'scale(0.92)';
+                screen.style.opacity = '0.4';
+                
+                setTimeout(() => {
+                    showScreen(8);
+                }, 380);
+            }, 620);
+        }
+
+        function launchConfetti() {
+            const colors = ['#F59E0B', '#10B981', '#3B82F6', '#F43F5E'];
+            const container = document.getElementById('screen-8');
+            
+            for (let i = 0; i < 65; i++) {
+                setTimeout(() => {
+                    const confetto = document.createElement('div');
+                    confetto.className = 'confetti';
+                    confetto.style.left = Math.random() * 100 + '%';
+                    confetto.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetto.style.width = (Math.random() * 8 + 6) + 'px';
+                    confetto.style.height = confetto.style.width;
+                    confetto.style.opacity = Math.random() * 0.7 + 0.5;
+                    confetto.style.animationDuration = (Math.random() * 2.2 + 2.4) + 's';
+                    confetto.style.animationDelay = (Math.random() * -1.5) + 's';
+                    
+                    container.appendChild(confetto);
+                    
+                    setTimeout(() => {
+                        if (confetto.parentNode) confetto.parentNode.removeChild(confetto);
+                    }, 5200);
+                }, i * 0.6);
+            }
+        }
+
+        function goToCatalog() {
+            // In real app would redirect to https://prizeme.com.ua/
+            const btn = event.currentTarget;
+            btn.innerHTML = `<span>Завантаження каталогу...</span>`;
+            
+            setTimeout(() => {
+                window.open('https://prizeme.com.ua/', '_blank');
+                // Or simulate
+                alert('Дякуємо! Ви перейдете на головну сторінку PrizeMe в новій вкладці.');
+            }, 850);
+        }
+
+        function shareWin() {
+            const text = `Я виграв 390 000 грн у PrizeMe! 🎉 Приєднуйся до акції: https://prizeme.com.ua`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Я — переможець PrizeMe!',
+                    text: text
+                });
+            } else {
+                // Fallback
+                navigator.clipboard.writeText(text).then(() => {
+                    const original = event.currentTarget.innerHTML;
+                    event.currentTarget.innerHTML = `<i class="fa-solid fa-check"></i> <span>Скопійовано!</span>`;
+                    
+                    setTimeout(() => {
+                        if (event.currentTarget) event.currentTarget.innerHTML = original;
+                    }, 1800);
+                });
+            }
+        }
+
+        function initializeBankSelection() {
+            // Pre-select first bank option (Monobank) for demo
+            setTimeout(() => {
+                const firstBank = document.querySelector('.bank-option');
+                if (firstBank && currentScreen === 6) {
+                    firstBank.classList.add('border-amber-400', 'bg-amber-500/5');
+                    selectedBank = 'monobank';
+                }
+            }, 800);
+        }
+
+        function initializeKeyboardSupport() {
+            document.addEventListener('keydown', function(e) {
+                if (e.key === "Enter" && currentScreen === 6) {
+                    const btn = document.querySelector('#screen-6 button');
+                    if (btn) btn.click();
+                }
+            });
+        }
+
+        function addHapticListeners() {
+            // Add subtle haptic on all tappable elements
+            const tappables = document.querySelectorAll('.quiz-option, .product-card, button');
+            tappables.forEach(el => {
+                el.addEventListener('click', () => {
+                    if (navigator.vibrate) {
+                        navigator.vibrate(8);
+                    }
+                });
+            });
+        }
+
+        // Initialize everything
+        function init() {
+            initializeTailwind();
+            
+            // Show first screen
+            const firstScreen = document.getElementById('screen-1');
+            firstScreen.style.opacity = '1';
+            firstScreen.classList.remove('hidden');
+            
+            updateProgress(1);
+            
+            // Preload some interactions
+            initializeBankSelection();
+            initializeKeyboardSupport();
+            addHapticListeners();
+            
+            // Easter egg: tap logo to reset
+            const logo = document.querySelector('.fa-trophy');
+            if (logo) {
+                logo.addEventListener('click', () => {
+                    if (confirm('Перезавантажити квіз?')) {
+                        location.reload();
+                    }
+                });
+            }
+            
+            // Demo tip (remove in production)
+            console.log('%c[PrizeMe Quiz] Modern tapable onboarding ready. All screens functional.', 'color:#64748b');
+        }
+
+        // Boot app
+        window.onload = init;
+        
+        // Bonus: make it feel more native
+        if ('serviceWorker' in navigator) {
+            // Future PWA support
+        }
+    </script>
+</body>
+</html>
